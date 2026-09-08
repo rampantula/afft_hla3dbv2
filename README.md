@@ -1,7 +1,7 @@
 # pMHC structure prediction with fine-tuned AlphaFold
+This repository contains scripts for the prediction of HLA class I / 9-mer peptide complexes with fine-tuned AlphaFold weights. Inputted target sequences are screened against a library of candidate template structures from HLA3DB - the pipeline picks templates per target, runs deterministic AlphaFold inference on a SLURM cluster, and collects the resulting PDBs.
 
-This repository contains scripts for the prediction of HLA class I / 9-mer peptide complexes with fine-tuned AlphaFold weights. Inputted target sequences are screened against a library of candidate template structures from HLA3DB - the pipeline picks templates per target, runs deterministic
-AlphaFold inference on a SLURM cluster, and collects the resulting PDBs.
+For methods related to HLA3DB (hla3db.research.chop.edu) refer to Gupta, S., Nerli, S., Kutti Kandy, S. et al. HLA3DB: comprehensive annotation of peptide/HLA complexes enables blind structure prediction of T cell epitopes. Nat Commun 14, 6349 (2023). https://doi.org/10.1038/s41467-023-42163-z
 
 ```
 Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University
@@ -9,17 +9,7 @@ Licensed for academic and non-commercial use only. Commercial use requires a
 separate license. See LICENSE for details.
 ```
 
-## Contents
-
-| File | Role |
-| --- | --- |
-| `fold.sh` | Driver. Builds inputs, then runs or submits predictions. |
-| `initialize.py` | Template selection + per-target input generation. |
-| `predict_structure.sh` | Per-target SLURM GPU worker (used when submitted through `--parallel`). |
-| `run_prediction.py` | AlphaFold inference, PDB splitting, D-score / pLDDT / PAE metrics. |
-| `predict_utils.py` | PDB reading, template featurization, model runner setup. |
-| `train_utils.py` | Feature-key lists and atom/frame helpers shared with the fine-tuning code. |
-| `store.py` | Collects final per-target PDBs into one flat directory. |
+Methods used to finetune and Benchmark Results are included below.
 
 ## Requirements
 - afft-hla3db conda env
@@ -34,15 +24,17 @@ separate license. See LICENSE for details.
 git clone https://github.com/rampantula/alphafold_finetune
 cd alphafold_finetune
 ```
-2. Create the conda environment on your local installation
+2. Download the parameters from https://zenodo.org/records/22664552and move the file into the "alphafold_finetune" directory
+
+3. Create the conda environment on your local installation
 ```bash
 conda env create -f afft_environment.yml 
 ```
-3. Populate input_seq/ with {target}_seq.txt files
+4. Populate input_seq/ with {target}_seq.txt files
 Line 1: MHC sequence (180 bp)
 Line 2: peptide sequence (9 bp)
 
-4. Run fold.sh 
+5. Run fold.sh 
 Singular Mode - All inferences sequentially on one node:
 ```bash
 sbatch fold.sh
@@ -52,12 +44,42 @@ Parallel Mode - One GPU job per target:
 sbatch fold.sh --parallel
 ```
 
-5. After the process runs you can also flatten results and collect the pdbs using:
+6. After the process runs you can also flatten results and collect the pdbs using:
 ```bash
 python store.py     # outfiles/<target>/outputs/<target>_model_split.pdb -> MHC_pdbs/<target>.pdb
 ```
 
-## Prediction Process 
+## Fine-tune Methods and Benchmarking 
+![D-score distribution](Figures/dscore_accuracy_panel.png)
+Performance of AFFT-HLA3DBv2 (this repo) against previous fine-tuned models and current state-of-the-art prediction models, with emphasis on peptide conformational accruacy.
+AFFT-HLA3DBv2 provides greatest advantage over other models in non-A02 and non ∆7-1 backbone targets. 
+
+AFFT-HLA3DBv2 was finetuned using training template selection on structures HLA3DB published before 2023 and validated and tested on structures published after 2023.
+For each target, every template is scored on two axes:
+
+- **MHC**: global Needleman–Wunsch alignment (BLOSUM62, gap open −11, extend −1) via Biopython's `PairwiseAligner`, giving an alignment score, a
+  residue-level target→template mapping, and a percent identity.
+- **Peptide**: summed BLOSUM62 score over the nine positions, plus a Hamming mismatch count.
+
+Both scores are min-max normalized across the surviving candidates for that target, then combined as `mhc_weight * norm_mhc + peptide_weight * norm_peptide`
+(weights are renormalized to sum to 1; defaults 0.7 / 0.3). The top N are kept.
+By default only one template per base PDB ID is allowed, so `6PTE-AC` blocks `6PTE-DF`. A template whose ID equals the target ID is always excluded, and a
+trailing `_reordered` on a template filename is stripped before that comparison.
+
+Selected templates were predicted and utilized both Alphafold loss functions as well as a secondary d-score based loss function to prioritize peptide backbone accuracy.
+
+## Pipeline Overview 
+### Contents
+
+| File | Role |
+| --- | --- |
+| `fold.sh` | Driver. Builds inputs, then runs or submits predictions. |
+| `initialize.py` | Template selection + per-target input generation. |
+| `predict_structure.sh` | Per-target SLURM GPU worker (used when submitted through `--parallel`). |
+| `run_prediction.py` | AlphaFold inference, PDB splitting, D-score / pLDDT / PAE metrics. |
+| `predict_utils.py` | PDB reading, template featurization, model runner setup. |
+| `train_utils.py` | Feature-key lists and atom/frame helpers shared with the fine-tuning code. |
+| `store.py` | Collects final per-target PDBs into one flat directory. |
 
 ### Stage 0 - Input and Prediction submissions
 
@@ -87,22 +109,6 @@ EXTRA_ARGS="--num_recycle 3 --resample_msa"
 ```
 
 ### Stage 1 — `initialize.py`
-
-For each target, every template is scored on two axes:
-
-- **MHC**: global Needleman–Wunsch alignment (BLOSUM62, gap open −11, extend
-  −1) via Biopython's `PairwiseAligner`, giving an alignment score, a
-  residue-level target→template mapping, and a percent identity.
-- **Peptide**: summed BLOSUM62 score over the nine positions, plus a Hamming
-  mismatch count.
-
-Both scores are min-max normalized across the surviving candidates for that
-target, then combined as `mhc_weight * norm_mhc + peptide_weight * norm_peptide`
-(weights are renormalized to sum to 1; defaults 0.7 / 0.3). The top N are kept.
-By default only one template per base PDB ID is allowed, so `6PTE-AC` blocks
-`6PTE-DF`. A template whose ID equals the target ID is always excluded, and a
-trailing `_reordered` on a template filename is stripped before that comparison.
-
 Useful flags:
 
 | Flag | Default | Effect |

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Deterministic prediction with fine-tuned AlphaFold parameters.
+Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University
+Licensed for academic and non-commercial use only. Commercial use requires a separate license.
+See LICENSE file for details.
 """
-
 import argparse
 import inspect
 import itertools
@@ -26,6 +27,11 @@ from alphafold.model.all_atom import atom37_to_torsion_angles, atom37_to_frames
 import jax.numpy as jnp
 import train_utils
 
+"""
+Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University
+Licensed for academic and non-commercial use only. Commercial use requires a separate license.
+See LICENSE file for details.
+"""
 
 def parse_args():
     parser = argparse.ArgumentParser(

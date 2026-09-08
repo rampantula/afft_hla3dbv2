@@ -1,0 +1,25 @@
+Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University.
+All rights reserved.
+
+Academic and Non-Commercial Use License
+
+Permission is granted, free of charge, to any academic institution, researcher, or
+individual to use, copy, modify, and distribute this software for non-commercial
+research and educational purposes, subject to the following conditions:
+
+1. The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the software.
+
+2. Commercial use, including use by for-profit entities or use in connection with
+   any commercial product or service, is strictly prohibited without a separate
+   written license agreement.
+
+For commercial licensing inquiries, contact:
+
+Children's Hospital of Philadelphia Technology Transfer:
+Cassie M. Tran | TRANCM@chop.edu
+
+Stanford Office of Technology Licensing:
+Eileen Lee | eileen.lee@stanford.edu
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.

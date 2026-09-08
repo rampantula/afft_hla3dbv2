@@ -1,34 +1,8 @@
 #!/usr/bin/env python3
 """
-Generate per-target AlphaFold inputs from plain-text target sequence files and
-template PDB structures, using the same input format and output directory
-layout as initialize.py:
-
-  Inputs:
-    input_seq/<target_pdbid>_*.txt     line 1 = target HLA/MHC sequence
-                                        line 2 = target peptide sequence
-    template_pdbs/*.pdb                template structure files (chain A =
-                                        MHC, chain B = 9-mer peptide); the
-                                        template's HLA/MHC and peptide
-                                        sequences are read directly from these
-                                        structures (same as the Excel/PDB
-                                        version of this script), not from a
-                                        separate sequence file.
-
-  Outputs (per target, matching initialize.py's layout):
-    <target_pdbid>/inputs/target.tsv
-    <target_pdbid>/inputs/alignments.tsv
-    <target_pdbid>/inputs/templates/<template_pdbid_lower>.pdb   (copied)
-
-  Point run_predictionv3.py's --targets argument straight at the output root
-  directory (it discovers */inputs/target.tsv files itself); no combined TSV
-  needs to be assembled separately.
-
-The template-selection/scoring logic itself -- Needleman-Wunsch MHC alignment,
-peptide BLOSUM62 scoring, weighted combined score, peptide-mismatch and
-MHC-identity filters, top-N selection with same-base-PDB dedup, and real
-(non-hardcoded) alignstrings/identities/lengths -- is unchanged from the
-Excel/PDB-driven version of this script.
+Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University
+Licensed for academic and non-commercial use only. Commercial use requires a separate license.
+See LICENSE file for details.
 """
 
 from __future__ import annotations

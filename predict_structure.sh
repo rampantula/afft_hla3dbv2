@@ -7,6 +7,11 @@
 #SBATCH --output=logs/predict_%j.out
 #SBATCH --error=logs/predict_%j.err
 
+#Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University
+#Licensed for academic and non-commercial use only. Commercial use requires a separate license.
+#See LICENSE file for details.
+
+
 # Per-target prediction worker. Not run by hand -- the driver
 # (fold.sh --parallel) submits one of these per target:
 #
