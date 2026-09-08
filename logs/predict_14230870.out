@@ -1,0 +1,32 @@
+XLA_FLAGS=--xla_gpu_force_compilation_parallelism=12 --xla_gpu_autotune_level=0 --xla_gpu_enable_triton_gemm=false | CPUs=12
+[stage] activating conda ...
+target=6PZ5 on g-10-03
+command: run_prediction.py --targets /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/6PZ5/inputs/target.tsv --params_file /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl --outfile_prefix 6PZ5 --output_dir /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/6PZ5/outputs --model_name model_2_ptm --verbose
+device: cuda:0
+model_name: model_2_ptm
+params_file: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl
+seed: 0
+crop_size: 189
+resample_msa: False
+START: 1/1 6PZ5
+COMING HERE
+THIS TEMPLATE outfiles/6PZ5/inputs/templates/6pyj.pdb 189 189
+GSHSMRYFHTSVSRPGRGEPRFITVGYVDDTLFVRFDSDAASPREEPRAPWIEQEGPEYWDRETQICKAKAQTDREDLRTLLRYYNQSEAGSHTLQNMYGCDVGPDGRLLRGYHQDAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQLRAYLEGECVEWLRRYLENGKETLQLRNQSVFNF
+this template outfiles/6PZ5/inputs/templates/6pyj.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/6PZ5/inputs/templates/6pyv.pdb 189 189
+GSHSMRYFHTSVSRPGRGEPRFITVGYVDDTLFVRFDSDAASPREEGRAPWIEQEGPEHWDRETQICKAKAQTDREDLRTLLRYYNQSEAGSHTLQNMYGCDVGPDGRLLRGYHQDAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQLRAYLEGECVEWLRRYLENGKETLQLRNQSVFNF
+this template outfiles/6PZ5/inputs/templates/6pyv.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/6PZ5/inputs/templates/6pyw.pdb 189 189
+GSHSMRYFHTSVSRPGRGEPRFITVGYVDDTLFVRFDSDAASPREEPRAPWIEQEGPEYADRETQICKAKAQTDREDLRTLLRYYNQSEAGSHTLQNMYGCDVGPDGRLLRGYHQDAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQLRAYLEGECVEWLRRYLENGKETLQLRNQSVFNF
+this template outfiles/6PZ5/inputs/templates/6pyw.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/6PZ5/inputs/templates/3lv3.pdb 189 189
+GSHSMRYFHTSVSRPGRGEPRFITVGYVDDTLFVRFDSDAASPREEPRAPWIEQEGPEYWDRETQICKAKAQTDREDLRTLLRYYNQSEAGSHTLQNMYGCDVGPDGRLLRGYHQDAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQLRAYLEGECVEWLRRYLENGKETLQSRRWRRWNR
+this template outfiles/6PZ5/inputs/templates/3lv3.pdb 189 189
+running model_2_ptm
+model_2_ptm pLDDT: 98.3768586451029 Time: 43.50156505103223
+model_1 98.3768586451029
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/6PZ5/outputs/6PZ5_model_split.pdb
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/6PZ5/outputs/6PZ5_final.tsv

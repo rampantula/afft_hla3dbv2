@@ -1,0 +1,32 @@
+XLA_FLAGS=--xla_gpu_force_compilation_parallelism=12 --xla_gpu_autotune_level=0 --xla_gpu_enable_triton_gemm=false | CPUs=12
+[stage] activating conda ...
+target=9F13 on g-10-01
+command: run_prediction.py --targets /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/9F13/inputs/target.tsv --params_file /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl --outfile_prefix 9F13 --output_dir /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/9F13/outputs --model_name model_2_ptm --verbose
+device: cuda:0
+model_name: model_2_ptm
+params_file: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl
+seed: 0
+crop_size: 189
+resample_msa: False
+START: 1/1 9F13
+COMING HERE
+THIS TEMPLATE outfiles/9F13/inputs/templates/7su9.pdb 189 189
+GSHSMRYFYTAVSRPGRGEPRFIAVGYVDDTQFVQFDSDAASPRGEPRAPWVEQEGPEYWDRETQKYKRQAQTDRVNLRKLRGYYNQSEAGSHTLQRMYGCDLGPDGRLLRGYNQFAYDGKDYIALNEDLRSWTAADKAAQITQRKWEAAREAEQRRAYLEGTCVEWLRRYLENGKKTLQGADGVGKSL
+this template outfiles/9F13/inputs/templates/7su9.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/9F13/inputs/templates/5vgd.pdb 189 189
+GSHSMRYFYTAVSRPGRGEPRFIAVGYVDDTQFVQFDSDAASPRGEPRAPWVEQEGPEYWDRETQKYKRQAQTDRVNLRKLRGYYNQSEAGSHTLQRMYGCDLGPDGRLLRGYNQFAYDGKDYIALNEDLRSWTAADKAAQITQRKWEAAREAEQRRAYLEGTCVEWLRRYLENGKKTLQSAEPVPLQL
+this template outfiles/9F13/inputs/templates/5vgd.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/9F13/inputs/templates/8elg.pdb 189 189
+GSHSMRYFYTAMSRPGRGEPRFIAVGYVDDTQFVRFDSDAASPRMAPRAPWIEQEGPEYWDRETQISKTNTQTYRESLRNLRGYYNQSEAGSHTLQRMYGCDVGPDGRLLRGHDQSAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAAREAEQWRAYLEGLCVEWLRRYLENGKETLQNQKLIANAF
+this template outfiles/9F13/inputs/templates/8elg.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/9F13/inputs/templates/4lcy-ac.pdb 189 189
+GSHSMRYFYTAMSRPGRGEPRFIAVGYVDDTQFVRFDSDAASPRMAPRAPWIEQEGPEYWDRETQKYKRQAQTDRVSLRNLRGYYNQSEAGSHTLQRMYGCDVGPDGRLLRGHDQSAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAAREAEQWRAYLEGLCVEWLRRYLENGKETLQFTMRLLSPV
+this template outfiles/9F13/inputs/templates/4lcy-ac.pdb 189 189
+running model_2_ptm
+model_2_ptm pLDDT: 97.53803611675258 Time: 42.618777857976966
+model_1 97.53803611675258
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/9F13/outputs/9F13_model_split.pdb
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/9F13/outputs/9F13_final.tsv

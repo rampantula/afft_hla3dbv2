@@ -1,0 +1,32 @@
+XLA_FLAGS=--xla_gpu_force_compilation_parallelism=12 --xla_gpu_autotune_level=0 --xla_gpu_enable_triton_gemm=false | CPUs=12
+[stage] activating conda ...
+target=2VLL-DF on g-10-01
+command: run_prediction.py --targets /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/2VLL-DF/inputs/target.tsv --params_file /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl --outfile_prefix 2VLL-DF --output_dir /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/2VLL-DF/outputs --model_name model_2_ptm --verbose
+device: cuda:0
+model_name: model_2_ptm
+params_file: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl
+seed: 0
+crop_size: 189
+resample_msa: False
+START: 1/1 2VLL-DF
+COMING HERE
+THIS TEMPLATE outfiles/2VLL-DF/inputs/templates/2vll-ac.pdb 189 189
+GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDGETRKVKAHSQTHRVDLGTLRGYYNQSEAGSHTVQRMYGCDVGSDWRFLRGYHQYAYDGKDYIALKEDLRSWTAADMAAQTTKHKWEAAHVAEQLRAYLEGTCVEWLRRYLENGKETLQGILGFVFTL
+this template outfiles/2VLL-DF/inputs/templates/2vll-ac.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/2VLL-DF/inputs/templates/5hhn.pdb 189 189
+GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDGETRKVKAHSQTHRVDLGTLRGYYNQSEAGSHTVQRMYGCDVGSDWRFLRGYHQYAYDGKDYIALKEDLRSWTAADMAAQTTKHKWEAAHVAEQLRAYLEGTCVEWLRRYLENGKETLQGILGLVFTL
+this template outfiles/2VLL-DF/inputs/templates/5hhn.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/2VLL-DF/inputs/templates/5hhq.pdb 189 189
+GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDGETRKVKAHSQTHRVDLGTLRGYYNQSEAGSHTVQRMYGCDVGSDWRFLRGYHQYAYDGKDYIALKEDLRSWTAADMAAQTTKHKWEAAHVAEQLRAYLEGTCVEWLRRYLENGKETLQGIWGFVFTL
+this template outfiles/2VLL-DF/inputs/templates/5hhq.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/2VLL-DF/inputs/templates/5hhp.pdb 189 189
+GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDGETRKVKAHSQTHRVDLGTLRGYYNQSEAGSHTVQRMYGCDVGSDWRFLRGYHQYAYDGKDYIALKEDLRSWTAADMAAQTTKHKWEAAHVAEQLRAYLEGTCVEWLRRYLENGKETLQGILEFVFTL
+this template outfiles/2VLL-DF/inputs/templates/5hhp.pdb 189 189
+running model_2_ptm
+model_2_ptm pLDDT: 98.03858617013915 Time: 44.67784095008392
+model_1 98.03858617013915
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/2VLL-DF/outputs/2VLL-DF_model_split.pdb
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/2VLL-DF/outputs/2VLL-DF_final.tsv

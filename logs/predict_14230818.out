@@ -1,0 +1,32 @@
+XLA_FLAGS=--xla_gpu_force_compilation_parallelism=12 --xla_gpu_autotune_level=0 --xla_gpu_enable_triton_gemm=false | CPUs=12
+[stage] activating conda ...
+target=3KPN on g-10-03
+command: run_prediction.py --targets /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/3KPN/inputs/target.tsv --params_file /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl --outfile_prefix 3KPN --output_dir /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/3KPN/outputs --model_name model_2_ptm --verbose
+device: cuda:0
+model_name: model_2_ptm
+params_file: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl
+seed: 0
+crop_size: 189
+resample_msa: False
+START: 1/1 3KPN
+COMING HERE
+THIS TEMPLATE outfiles/3KPN/inputs/templates/3kpl.pdb 189 189
+GSHSMRYFYTAMSRPGRGEPRFITVGYVDDTLFVRFDSDATSPRKEPRAPWIEQEGPEYWDRETQISKTNTQTYRENLRTALRYYNQSEAGSHIIQRMYGCDVGPDGRLLRGYDQDAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQDRAYLEGLCVESLRRYLENGKETLQEEYLQAFTY
+this template outfiles/3KPN/inputs/templates/3kpl.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/3KPN/inputs/templates/3kpp.pdb 189 189
+GSHSMRYFYTAMSRPGRGEPRFITVGYVDDTLFVRFDSDATSPRKEPRAPWIEQEGPEYWDRETQISKTNTQTYRENLRTALRYYNQSEAGSHIIQRMYGCDVGPDGRLLRGYDQYAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQDRAYLEGLCVESLRRYLENGKETLQEEYLQAFTY
+this template outfiles/3KPN/inputs/templates/3kpp.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/3KPN/inputs/templates/3kpo.pdb 189 189
+GSHSMRYFYTAMSRPGRGEPRFITVGYVDDTLFVRFDSDATSPRKEPRAPWIEQEGPEYWDRETQISKTNTQTYRENLRTALRYYNQSEAGSHIIQRMYGCDVGPDGRLLRGYDQDAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQLRAYLEGLCVESLRRYLENGKETLQEEYLKAWTF
+this template outfiles/3KPN/inputs/templates/3kpo.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/3KPN/inputs/templates/3kpm.pdb 189 189
+GSHSMRYFYTAMSRPGRGEPRFITVGYVDDTLFVRFDSDATSPRKEPRAPWIEQEGPEYWDRETQISKTNTQTYRENLRTALRYYNQSEAGSHIIQRMYGCDVGPDGRLLRGYDQDAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQDRAYLEGLCVESLRRYLENGKETLQEEYLKAWTF
+this template outfiles/3KPN/inputs/templates/3kpm.pdb 189 189
+running model_2_ptm
+model_2_ptm pLDDT: 98.00260153760794 Time: 45.64048058993649
+model_1 98.00260153760794
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/3KPN/outputs/3KPN_model_split.pdb
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/3KPN/outputs/3KPN_final.tsv

@@ -1,0 +1,32 @@
+XLA_FLAGS=--xla_gpu_force_compilation_parallelism=12 --xla_gpu_autotune_level=0 --xla_gpu_enable_triton_gemm=false | CPUs=12
+[stage] activating conda ...
+target=6J1W on g-10-02
+command: run_prediction.py --targets /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/6J1W/inputs/target.tsv --params_file /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl --outfile_prefix 6J1W --output_dir /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/6J1W/outputs --model_name model_2_ptm --verbose
+device: cuda:0
+model_name: model_2_ptm
+params_file: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl
+seed: 0
+crop_size: 189
+resample_msa: False
+START: 1/1 6J1W
+COMING HERE
+THIS TEMPLATE outfiles/6J1W/inputs/templates/6j1v.pdb 189 189
+GSHSMRYFSTSVSRPGSGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDQETRNVKAHSQTDRENLGTLRGYYNQSEAGSHTIQIMYGCDVGSDGRFLRGYEQHAYDGKDYIALNEDLRSWTAADMAAQITQRKWEAARRAEQLRAYLEGTCVEWLRRYLENGKETLQAIFQSSMTK
+this template outfiles/6J1W/inputs/templates/6j1v.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/6J1W/inputs/templates/3rl1.pdb 189 189
+GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDQETRNVKAQSQTDRVDLGTLRGYYNQSEAGSHTIQIMYGCDVGSDGRFLRGYRQDAYDGKDYIALNEDLRSWTAADMAAQITKRKWEAAHEAEQLRAYLDGTCVEWLRRYLENGKETLQAIFQSSMTK
+this template outfiles/6J1W/inputs/templates/3rl1.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/6J1W/inputs/templates/1q94-ac.pdb 189 189
+GSHSMRYFYTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDQETRNVKAQSQTDRVDLGTLRGYYNQSEDGSHTIQIMYGCDVGPDGRFLRGYRQDAYDGKDYIALNEDLRSWTAADMAAQITKRKWEAAHAAEQQRAYLEGRCVEWLRRYLENGKETLQAIFQSSMTK
+this template outfiles/6J1W/inputs/templates/1q94-ac.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/6J1W/inputs/templates/6id4-au.pdb 189 189
+GSHSMRYFYTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDQETRNVKAQSQTDRVDLGTLRGYYNQSEDGSHTIQIMYGCDVGPDGRFLRGYRQDAYDGKDYIALNEDLRSWTAADMAAQITKRKWEAAHAAEQQRAYLEGRCVEWLRRYLENGKETLQAIFQSSMTK
+this template outfiles/6J1W/inputs/templates/6id4-au.pdb 189 189
+running model_2_ptm
+model_2_ptm pLDDT: 97.71478118280226 Time: 41.65182203496806
+model_1 97.71478118280226
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/6J1W/outputs/6J1W_model_split.pdb
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/6J1W/outputs/6J1W_final.tsv

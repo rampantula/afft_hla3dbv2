@@ -1,0 +1,10 @@
++ TARGET_TSV=/mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/4HWZ/inputs/target.tsv
++ [[ ! -f /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/4HWZ/inputs/target.tsv ]]
++ OUTDIR=/mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/4HWZ/outputs
++ mkdir -p /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/4HWZ/outputs
+++ hostname
++ echo 'target=4HWZ on g-12-06'
++ python run_prediction.py --targets /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/4HWZ/inputs/target.tsv --params_file /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl --outfile_prefix 4HWZ --output_dir /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/4HWZ/outputs --model_name model_2_ptm --verbose
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1784744298.539669  560843 gpu_device.cc:2020] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 38477 MB memory:  -> device: 0, name: NVIDIA A100-SXM4-40GB, pci bus id: 0000:65:00.0, compute capability: 8.0
+I0000 00:00:1784744298.551848  560843 mlir_graph_optimization_pass.cc:437] MLIR V1 optimization pass is not enabled

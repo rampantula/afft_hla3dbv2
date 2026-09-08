@@ -1,0 +1,32 @@
+XLA_FLAGS=--xla_gpu_force_compilation_parallelism=12 --xla_gpu_autotune_level=0 --xla_gpu_enable_triton_gemm=false | CPUs=12
+[stage] activating conda ...
+target=9CX1 on g-12-06
+command: run_prediction.py --targets /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/9CX1/inputs/target.tsv --params_file /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl --outfile_prefix 9CX1 --output_dir /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/9CX1/outputs --model_name model_2_ptm --verbose
+device: cuda:0
+model_name: model_2_ptm
+params_file: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl
+seed: 0
+crop_size: 189
+resample_msa: False
+START: 1/1 9CX1
+COMING HERE
+THIS TEMPLATE outfiles/9CX1/inputs/templates/4hwz.pdb 189 189
+GSHSMRYFYTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDRNTRNVKAQSQTDRVDLGTLRGYYNQSEAGSHTIQMMYGCDVGSDGRFLRGYRQDAYDGKDYIALKEDLRSWTAADMAAQTTKHKWEAAHVAEQWRAYLEGTCVEWLRRYLENGKETLQAIFQSSMTK
+this template outfiles/9CX1/inputs/templates/4hwz.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/9CX1/inputs/templates/6j1w.pdb 189 189
+GSHSMRYFSTSVSRPGSGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQERPEYWDQETRNVKAQSQTDRVDLGTLRGYYNQSEAGSHTIQIMYGCDVGSDGRFLRGYEQHAYDGKDYIALNEDLRSWTAADMAAQITQRKWEAARWAEQLRAYLEGTCVEWLRRYLENGKETLQAIFQSSMTK
+this template outfiles/9CX1/inputs/templates/6j1w.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/9CX1/inputs/templates/6j1v.pdb 189 189
+GSHSMRYFSTSVSRPGSGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDQETRNVKAHSQTDRENLGTLRGYYNQSEAGSHTIQIMYGCDVGSDGRFLRGYEQHAYDGKDYIALNEDLRSWTAADMAAQITQRKWEAARRAEQLRAYLEGTCVEWLRRYLENGKETLQAIFQSSMTK
+this template outfiles/9CX1/inputs/templates/6j1v.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/9CX1/inputs/templates/5swq.pdb 189 189
+GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDGETRKVKAHSQTHRVDLGTLRGYYNQSEAGSHTVQRMYGCDVGSDWRFLRGYHQYAYDGKDYIALKEDLRSWTAADMAAQTTKHKWEAAHVAEQLRAYLEGTCVEWLRRYLENGKETLQCVNGSCFTV
+this template outfiles/9CX1/inputs/templates/5swq.pdb 189 189
+running model_2_ptm
+model_2_ptm pLDDT: 97.70833576862661 Time: 44.982300417999795
+model_1 97.70833576862661
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/9CX1/outputs/9CX1_model_split.pdb
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/9CX1/outputs/9CX1_final.tsv

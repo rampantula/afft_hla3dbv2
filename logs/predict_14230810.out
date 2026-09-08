@@ -1,0 +1,32 @@
+XLA_FLAGS=--xla_gpu_force_compilation_parallelism=12 --xla_gpu_autotune_level=0 --xla_gpu_enable_triton_gemm=false | CPUs=12
+[stage] activating conda ...
+target=1W0W on g-10-05
+command: run_prediction.py --targets /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/1W0W/inputs/target.tsv --params_file /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl --outfile_prefix 1W0W --output_dir /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/1W0W/outputs --model_name model_2_ptm --verbose
+device: cuda:0
+model_name: model_2_ptm
+params_file: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/affthla3db.pkl
+seed: 0
+crop_size: 189
+resample_msa: False
+START: 1/1 1W0W
+COMING HERE
+THIS TEMPLATE outfiles/1W0W/inputs/templates/1w0v.pdb 189 189
+GSHSMRYFHTSVSRPGRGEPRFITVGYVDDTLFVRFDSDAASPREEPRAPWIEQEGPEYWDRETQICKAKAQTDREDLRTLLRYYNQSEAGSHTLQNMYGCDVGPDGRLLRGYHQDAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQLRAYLEGECVEWLRRYLENGKETLQRRLPIFSRL
+this template outfiles/1W0W/inputs/templates/1w0v.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/1W0W/inputs/templates/2bsr.pdb 189 189
+GSHSMRYFHTSVSRPGRGEPRFITVGYVDDTLFVRFDSDAASPREEPRAPWIEQEGPEYWDRETQICKAKAQTDREDLRTLLRYYNQSEAGSHTLQNMYGCDVGPDGRLLRGYHQNAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQLRAYLEGECVEWLRRYLENGKETLQRRIYDLIEL
+this template outfiles/1W0W/inputs/templates/2bsr.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/1W0W/inputs/templates/1of2.pdb 189 189
+GSHSMRYFHTSVSRPGRGEPRFITVGYVDDTLFVRFDSDAASPREEPRAPWIEQEGPEYWDRETQICKAKAQTDREDLRTLLRYYNQSEAGSHTLQNMYGCDVGPDGRLLRGYHQHAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQLRAYLEGECVEWLRRYLENGKETLQRRKWRRWHL
+this template outfiles/1W0W/inputs/templates/1of2.pdb 189 189
+COMING HERE
+THIS TEMPLATE outfiles/1W0W/inputs/templates/3d18.pdb 189 189
+GSHSMRYFHTSVSRPGRGEPRFITVGYVDDTLFVRFDSDAASPREEPRAPWIEQEGPEYWDRETQICKAKAQTDREDLRTLLRYYNQSEAGSHTLQNMYGCDVGPDGRLLRGYHQHAYDGKDYIALNEDLSSWTAADTAAQITQRKWEAARVAEQLRAYLEGECVEWLRRYLENGKETLQRRRWRRLTL
+this template outfiles/1W0W/inputs/templates/3d18.pdb 189 189
+running model_2_ptm
+model_2_ptm pLDDT: 98.33315782440536 Time: 41.51283007900929
+model_1 98.33315782440536
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/1W0W/outputs/1W0W_model_split.pdb
+made: /mnt/isilon/sgourakis_lab_storage/personal/ram/afft2026/outfiles/1W0W/outputs/1W0W_final.tsv
