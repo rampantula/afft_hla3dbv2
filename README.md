@@ -1,4 +1,4 @@
-# pMHC structure prediction with fine-tuned AlphaFold
+# Alphafold Finetune HLA3db
 This repository contains scripts for the prediction of HLA class I / 9-mer peptide complexes with fine-tuned AlphaFold weights. Inputted target sequences are screened against a library of candidate template structures from HLA3DB - the pipeline picks templates per target, runs deterministic AlphaFold inference on a SLURM cluster, and collects the resulting PDBs.
 
 For methods related to HLA3DB (hla3db.research.chop.edu) refer to Gupta, S., Nerli, S., Kutti Kandy, S. et al. HLA3DB: comprehensive annotation of peptide/HLA complexes enables blind structure prediction of T cell epitopes. Nat Commun 14, 6349 (2023). https://doi.org/10.1038/s41467-023-42163-z
