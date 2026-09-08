@@ -21,10 +21,10 @@ Methods used to finetune and Benchmark Results are included below.
 ## Setup and Runtime Options
 1. Clone this repository 
 ```bash
-git clone https://github.com/rampantula/alphafold_finetune
-cd alphafold_finetune
+git clone https://github.com/rampantula/afft-hla3dbv2
+cd afft-hla3dbv2
 ```
-2. Download the parameters from https://zenodo.org/records/22664552and move the file into the "alphafold_finetune" directory
+2. Download the parameters from https://zenodo.org/records/22664552and move the file into the "afft-hla3dbv2" directory
 
 3. Create the conda environment on your local installation
 ```bash
