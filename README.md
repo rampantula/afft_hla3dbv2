@@ -24,7 +24,7 @@ Methods used to finetune and Benchmark Results are included below.
 git clone https://github.com/rampantula/afft-hla3dbv2
 cd afft-hla3dbv2
 ```
-2. Download the parameters from https://zenodo.org/records/22664552and move the file into the "afft-hla3dbv2" directory
+2. Download the parameters from https://zenodo.org/records/22664552 and move the file into the "afft-hla3dbv2" directory
 
 3. Create the conda environment on your local installation
 ```bash
