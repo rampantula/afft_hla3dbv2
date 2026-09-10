@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University
-Licensed for academic and non-commercial use only. Commercial use requires a separate license.
-See LICENSE file for details.
+Deterministic prediction with fine-tuned AlphaFold parameters.
 """
+
 import argparse
 import inspect
 import itertools
@@ -27,21 +26,13 @@ from alphafold.model.all_atom import atom37_to_torsion_angles, atom37_to_frames
 import jax.numpy as jnp
 import train_utils
 
-"""
-Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University
-Licensed for academic and non-commercial use only. Commercial use requires a separate license.
-See LICENSE file for details.
-"""
 
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Run deterministic AlphaFold inference with fine-tuned weights."
     )
     parser.add_argument("--targets", required=True,
-                        help="Either a single TSV containing target_chainseq and "
-                             "templates_alignfile, or a root directory containing "
-                             "one or more <target_pdbid>/inputs/target.tsv files "
-                             "(as produced by generate_training_dataset.py).")
+                        help="TSV containing target_chainseq and templates_alignfile.")
     parser.add_argument("--params_file", required=True,
                         help="Fine-tuned parameter pickle saved by the training script.")
     parser.add_argument("--outfile_prefix", required=True)
@@ -59,7 +50,8 @@ def parse_args():
     parser.add_argument("--validation_index_col", default=None,
                         help="Optional column containing the original 0-based validation-loader index. Otherwise current TSV row order is used.")
 
-    parser.add_argument("--crop_size", type=int, default=None,
+    # These defaults match the fine-tuning script supplied in this conversation.
+    parser.add_argument("--crop_size", type=int, default=190,
                         help="Defaults to the longest target. Set this to the training crop_size "
                              "when reproducing validation.")
     parser.add_argument("--msa_clusters", type=int, default=5)
@@ -162,6 +154,7 @@ def run_prediction_compatibly(**kwargs):
     elif "seed" in signature.parameters:
         kwargs["seed"] = kwargs.pop("_seed")
     else:
+        # The helper may use NumPy's global RNG. seed_everything() already fixed it.
         kwargs.pop("_seed")
 
     return predict_utils.run_alphafold_prediction(**kwargs)
@@ -174,9 +167,12 @@ ATOM_C = residue_constants.atom_order["C"]
 
 
 def _read_pdb_atom37(pdbfile):
-    """
-    Read one- or multi-chain PDB coordinates into ordered atom37 arrays.
+    """Read one- or multi-chain PDB coordinates into ordered atom37 arrays.
 
+    Residues are retained in their file order, so a split prediction containing
+    receptor chain A followed by peptide chain B is returned as one concatenated
+    residue array. This avoids alphafold.common.protein.from_pdb_string(), which
+    requires a chain_id when the PDB contains multiple chains.
     """
     residue_keys = []
     key_to_index = {}
@@ -187,6 +183,7 @@ def _read_pdb_atom37(pdbfile):
             if not line.startswith(("ATOM  ", "HETATM")):
                 continue
 
+            # Ignore non-primary alternate conformations.
             altloc = line[16]
             if altloc not in (" ", "A"):
                 continue
@@ -348,9 +345,11 @@ def _replace_chain_and_resseq(line, chain_id, residue_number):
 
 
 def split_prediction_pdb(input_pdb, output_pdb, target_chainseq):
-    """
-    Split an AlphaFold prediction into receptor chain A and peptide chain B.
+    """Split an AlphaFold prediction into receptor chain A and peptide chain B.
 
+    The final slash-separated sequence in target_chainseq is treated as the
+    peptide. All preceding residues are assigned to receptor chain A. Residue
+    order in the input PDB must match target_chainseq.
     """
     sequences = str(target_chainseq).split("/")
     if len(sequences) < 2:
@@ -642,26 +641,7 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
     anchor_table = _load_anchor_table(args.anchor_class_file)
 
-    targets_path = Path(args.targets)
-
-    if targets_path.is_dir():
-        target_tsvs = sorted(targets_path.glob("*/inputs/target.tsv"))
-        if not target_tsvs:
-            raise ValueError(f"No */inputs/target.tsv files found under {targets_path}")
-        targets = pd.concat(
-            [pd.read_table(f) for f in target_tsvs],
-            ignore_index=True,
-        )
-        # templates_alignfile entries written by generate_training_dataset.py
-        # are relative paths; resolve them against the targets root so this
-        # works regardless of the current working directory.
-        if "templates_alignfile" in targets.columns:
-            targets["templates_alignfile"] = targets["templates_alignfile"].apply(
-                lambda p: str(p) if Path(p).is_absolute() else str((targets_path / p).resolve())
-            )
-    else:
-        targets = pd.read_table(targets_path)
-
+    targets = pd.read_table(args.targets)
     required = {"target_chainseq", "templates_alignfile"}
     missing = required.difference(targets.columns)
     if missing:
@@ -741,6 +721,8 @@ def main():
                 except Exception as exc:
                     print(f"WARNING: exact-validation PDB split failed for {target_id}: {exc}", file=sys.stderr)
 
+            # These are useful diagnostics, but D-score above is computed directly
+            # from arrays exactly as in fine-tuning validation.
             try:
                 output_row[f"{args.model_name}_plddt"] = float(
                     np.mean(np.asarray(predicted_dict["predicted_lddt"]["lddt_ca"])))
@@ -813,6 +795,8 @@ def main():
                 print("made:", split_pdb)
                 output_row["predicted_pdbfile"] = str(split_pdb)
 
+                # D-score is calculated only after the PDB has been rewritten
+                # with receptor chain A and peptide chain B.
                 dscore = compute_output_dscore(
                     split_pdb,
                     target_row,

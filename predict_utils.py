@@ -1,4 +1,3 @@
-# From https://github.com/phbradley/alphafold_finetune
 ######################################################################################88
 import sys
 import os
@@ -8,7 +7,7 @@ from collections import OrderedDict
 from sys import exit
 import numpy as np
 import pandas as pd
-#import tensorflow as tf --> commented to prevent protobuf error
+import tensorflow as tf
 import train_utils
 import random
 from timeit import default_timer as timer
@@ -329,14 +328,11 @@ def create_single_template_features(
         template_pdbfile, allow_chainbreaks=allow_chainbreaks,
         allow_skipped_lines=allow_skipped_lines,
     )
-    print("COMING HERE")
+
     crs_tmp = [(c,r) for c in chains_tmp for r in all_resids_tmp[c]]
     num_res_tmp = len(crs_tmp)
     template_full_sequence = ''.join(all_name1s_tmp[c][r] for c,r in crs_tmp)
-    print("THIS TEMPLATE",template_pdbfile,len(template_full_sequence),expected_template_len)
     if expected_template_len:
-        print(template_full_sequence)
-        print("this template",template_pdbfile,len(template_full_sequence),expected_template_len)
         assert len(template_full_sequence) == expected_template_len
 
     all_positions_tmp, all_positions_mask_tmp = fill_afold_coords(
@@ -464,8 +460,9 @@ def create_batch_for_training(
 
     if random_seed is None:
         random_seed = np.random.randint(0,999999)
-    processed_feature_dict = model_runner.process_features(
-        feature_dict, random_seed=random_seed)
+    with tf.device('cpu:0'):
+        processed_feature_dict = model_runner.process_features(
+            feature_dict, random_seed=random_seed)
     if verbose:
         print('features_after_initial_processing:',
               ' '.join(processed_feature_dict.keys()))

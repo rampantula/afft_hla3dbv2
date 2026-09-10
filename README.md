@@ -1,181 +1,216 @@
-# Alphafold Finetune HLA3db
-This repository contains scripts for the prediction of HLA class I / 9-mer peptide complexes with fine-tuned AlphaFold weights. Inputted target sequences are screened against a library of candidate template structures from HLA3DB - the pipeline picks templates per target, runs deterministic AlphaFold inference on a SLURM cluster, and collects the resulting PDBs.
+# AFFT-HLA3DBv2
 
-For methods related to HLA3DB (hla3db.research.chop.edu) refer to Gupta, S., Nerli, S., Kutti Kandy, S. et al. HLA3DB: comprehensive annotation of peptide/HLA complexes enables blind structure prediction of T cell epitopes. Nat Commun 14, 6349 (2023). https://doi.org/10.1038/s41467-023-42163-z
+AFFT-HLA3DBv2 is an AlphaFold2 fine-tuning workflow for **peptide–HLA class I (pHLA-I) structure prediction**. The model was fine-tuned using 9-mer peptide/HLA-I structures from HLA3DB, with a dataset cutoff date of **July 1, 2026**.
 
-```
-Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University
-Licensed for academic and non-commercial use only. Commercial use requires a
-separate license. See LICENSE for details.
-```
+Fine-tuning was conducted by **Tianjian Liang** and **Ram Pantula**. For questions or issues, please contact **Dr. Nikolaos Sgourakis**.
 
-Methods used to finetune and Benchmark Results are included below.
+This branch of the repository contains the scripts needed to finetune the model.
 
-## Requirements
-- afft-hla3db conda env
-- A GPU for inference (the driver's sequential mode runs on whatever node it
-  lands on; `--parallel` requests `gpu:1` per job)
-- SLURM, if you use the shell drivers
-- A fine-tuned parameter pickle (e.g. `affthla3db.pkl`)
+## Overview
 
-## Setup and Runtime Options
-1. Clone this repository 
-```bash
-git clone https://github.com/rampantula/afft-hla3dbv2
-cd afft-hla3dbv2
-```
-2. Download the parameters from https://zenodo.org/records/22664552 and move the file into the "afft-hla3dbv2" directory
+AFFT-HLA3DBv2 introduces several innovations designed for peptide–HLA-I structure modeling:
 
-3. Create the conda environment on your local installation
-```bash
-conda env create -f afft_environment.yml 
-```
-4. Populate input_seq/ with {target}_seq.txt files
-Line 1: MHC sequence (180 bp)
-Line 2: peptide sequence (9 bp)
+### 1. Combined MHC and peptide sequence similarity for template selection
 
-5. Run fold.sh 
-Singular Mode - All inferences sequentially on one node:
-```bash
-sbatch fold.sh
-```
-Parallel Mode - One GPU job per target:
-```bash
-sbatch fold.sh --parallel
+BLOSUM62 similarity scores are calculated separately for the MHC and peptide sequences between each target and candidate template.
+
+MHC and peptide scores are normalized independently using min–max normalization:
+
+```text
+normalized_score = (x - min(x)) / (max(x) - min(x))
 ```
 
-6. After the process runs you can also flatten results and collect the pdbs using:
-```bash
-python store.py     # outfiles/<target>/outputs/<target>_model_split.pdb -> MHC_pdbs/<target>.pdb
+The normalized scores are then combined as:
+
+```text
+total_score = weight_peptide × peptide_score + weight_MHC × MHC_score
 ```
 
-## Fine-tune Methods and Benchmarking 
-![D-score distribution](Figures/dscore_accuracy_panel.png)
-Performance of AFFT-HLA3DBv2 (this repo) against previous fine-tuned models and current state-of-the-art prediction models, with emphasis on peptide conformational accruacy.
-AFFT-HLA3DBv2 provides greatest advantage over other models in non-A02 and non ∆7-1 backbone targets. 
+The **top four templates** are selected for AlphaFold2 input.
 
-AFFT-HLA3DBv2 was finetuned using training template selection on structures HLA3DB published before 2023 and validated and tested on structures published after 2023.
-For each target, every template is scored on two axes:
+### 2. Prevention of target leakage and redundant template selection
 
-- **MHC**: global Needleman–Wunsch alignment (BLOSUM62, gap open −11, extend −1) via Biopython's `PairwiseAligner`, giving an alignment score, a
-  residue-level target→template mapping, and a percent identity.
-- **Peptide**: summed BLOSUM62 score over the nine positions, plus a Hamming mismatch count.
+To reduce leakage and redundancy during template selection:
 
-Both scores are min-max normalized across the surviving candidates for that target, then combined as `mhc_weight * norm_mhc + peptide_weight * norm_peptide`
-(weights are renormalized to sum to 1; defaults 0.7 / 0.3). The top N are kept.
-By default only one template per base PDB ID is allowed, so `6PTE-AC` blocks `6PTE-DF`. A template whose ID equals the target ID is always excluded, and a
-trailing `_reordered` on a template filename is stripped before that comparison.
+- The ground-truth structure of the input target is excluded from template selection.
+- Redundant chain pairs originating from the same PDB entry are also excluded.
 
-Selected templates were predicted and utilized both Alphafold loss functions as well as a secondary d-score based loss function to prioritize peptide backbone accuracy.
+### 3. D-score–augmented fine-tuning loss
 
-## Pipeline Overview 
-### Contents
+A peptide-backbone **D-score** term is incorporated into the AlphaFold2 fine-tuning objective:
 
-| File | Role |
-| --- | --- |
-| `fold.sh` | Driver. Builds inputs, then runs or submits predictions. |
-| `initialize.py` | Template selection + per-target input generation. |
-| `predict_structure.sh` | Per-target SLURM GPU worker (used when submitted through `--parallel`). |
-| `run_prediction.py` | AlphaFold inference, PDB splitting, D-score / pLDDT / PAE metrics. |
-| `predict_utils.py` | PDB reading, template featurization, model runner setup. |
-| `train_utils.py` | Feature-key lists and atom/frame helpers shared with the fine-tuning code. |
-| `store.py` | Collects final per-target PDBs into one flat directory. |
-
-### Stage 0 - Input and Prediction submissions
-
-Run from a working directory containing:
-
-```
-input_seq/            <target_id>_*.txt   line 1 = MHC sequence, line 2 = 9-mer peptide
-template_pdbs/        *.pdb               chain A = MHC, chain B = 9-mer peptide
-affthla3db.pkl                            fine-tuned AlphaFold parameters
-logs/                                     must exist; SLURM writes here
+```text
+total_loss = AlphaFold_structure_loss + weight_dscore × D-score_loss
 ```
 
-The target ID is the text before the first underscore in the sequence filename.
-Template sequences are read straight out of the ATOM/HETATM records — no
-separate template sequence file is needed. Templates whose chain B is not a
-9-mer, or that are missing chain A or B, are skipped with a warning. Targets
-with non-9-mer peptides are skipped too.
+For the definition and interpretation of the D-score, see the HLA3DB publication:
 
-The knobs at the top of `fold.sh` (`INPUT_SEQ_DIR`, `TEMPLATE_PDB_DIR`,
-`TARGETS_ROOT`, `PARAMS_FILE`, `MODEL_NAME`) are meant to be edited in place.
-`GENERATE_ARGS` is forwarded to `initialize.py` and `EXTRA_ARGS` to
-`run_prediction.py`, e.g.:
+https://www.nature.com/articles/s41467-023-42163-z
+
+---
+
+## Installation
+
+### 1. Create the Python environment
+
+Create the Conda environment from the provided environment file:
 
 ```bash
-GENERATE_ARGS="--top-n 6 --min-peptide-mismatches 2"
-EXTRA_ARGS="--num_recycle 3 --resample_msa"
+conda env create --file alphafold.yml
 ```
 
-### Stage 1 — `initialize.py`
-Useful flags:
+Using **Mamba** instead of Conda is recommended for faster dependency resolution.
 
-| Flag | Default | Effect |
-| --- | --- | --- |
-| `--top-n` | 4 | Templates written per target |
-| `--mhc-weight` / `--peptide-weight` | 0.7 / 0.3 | Score weighting |
-| `--min-peptide-mismatches` | 0 | Drop templates *more* similar than this |
-| `--max-mhc-identity` | 1.0 | Drop templates above this MHC identity |
-| `--disable-peptide-mismatch-filter`, `--disable-mhc-identity-filter` | off | Skip the corresponding filter |
-| `--allow-same-pdb-multiple-times` | off | Permit several chain pairs from one PDB |
-| `--allow-fewer-than-top-n` | off | Continue instead of exiting when filters leave too few |
-| `--write-debug-scores` | off | Write `debug_scores.tsv` with every candidate, ranked |
-| `--allele-name`, `--start` | `A*02:01`, 0 | Literal values for those `target.tsv` columns |
+### 2. Install AlphaFold2 model parameters
 
-The mismatch and identity filters exist mainly for held-out benchmarking, where
-you want to exclude templates that are too close to the answer. Note that
-`--allele-name` is written verbatim and is *not* derived from the sequence, so
-it is wrong for any run that isn't A\*02:01 — nothing downstream reads it for
-modeling, but don't trust it as metadata.
+Follow the official AlphaFold installation instructions:
 
-Output per target:
+https://github.com/google-deepmind/alphafold
 
+Download the AlphaFold parameter archive `alphafold_params_2022-12-06.tar`, extract it, and place the parameter files inside a `params/` directory.
+
+---
+
+## Data Preparation
+
+### 1. Prepare the input Excel file
+
+Input sequences are provided in an Excel file following the format of `Training_setv2.xlsx`.
+
+The workflow uses the following information to construct each target and search for templates:
+
+- Target PDB ID
+- MHC sequence
+- Peptide sequence
+
+### 2. Generate template alignments
+
+The `Template/` directory contains PDB structures that can be selected as templates. Generate the template-alignment files with:
+
+```bash
+python gen_align_MHC_Pep_unique_pdb.py \
+    --excel Training_setv2.xlsx \
+    --template-pdb-dir ./Template \
+    --out-alignments-dir ./New_Align3 \
+    --top-n 4
 ```
-outfiles/<target_id>/inputs/target.tsv
-outfiles/<target_id>/inputs/alignments.tsv
-outfiles/<target_id>/inputs/templates/<template_id>.pdb
-outfiles/<target_id>/inputs/debug_scores.tsv        (optional)
+
+This step ranks candidate templates using the combined MHC/peptide sequence-similarity score and selects the **top four templates** for each target.
+
+### 3. Generate the training/testing TSV
+
+Convert the Excel input into the TSV format used by the AlphaFold fine-tuning and prediction scripts:
+
+```bash
+python generate_training_tsv.py \
+    --excel Training_setv2.xlsx \
+    --out training_datasetv23.tsv \
+    --alignments-dir ./New_Align3
 ```
 
-`target.tsv` carries `mhc`, `start`, `peptide`, `targetid`, `target_chainseq`
-(MHC and peptide joined by `/`), and `templates_alignfile`. `alignments.tsv`
-carries `template_pdbfile`, `target_to_template_alignstring` (`i:j;i:j;...`),
-`identities`, `target_len`, `template_len`. Peptide residues are mapped
-positionally 1:1, since everything is a 9-mer.
+The generated TSV contains the target sequence and the corresponding template-alignment file for each target.
 
-If filtering leaves fewer than `--top-n` templates for any target, the script
-exits with an error rather than silently under-templating. Pass
-`--allow-fewer-than-top-n` to override.
+---
 
-### Stage 2 — `run_prediction.py`
+## Fine-Tuning
+
+Fine-tune AlphaFold2 on the peptide–HLA-I training set with the D-score–augmented loss:
+
+```bash
+python dscore_loss_updatedv3.py \
+    --data_dir ./ \
+    --train_dataset ./training_datasetv23.tsv \
+    --valid_dataset ./testing_datasetv23.tsv \
+    --dump_valid_pdbs True \
+    --valid_pdb_dir ./output \
+    --anchor_class_file ./anchor_class.csv \
+    --outprefix testrun \
+    --dscore_weight 0.1 \
+    --lr_coef 0.025 \
+    --save_steps 391
+```
+
+---
+
+## Structure Prediction
+
+Use a fine-tuned parameter checkpoint to predict peptide–HLA-I structures:
 
 ```bash
 python run_prediction.py \
-    --targets <target.tsv or targets root dir> \
-    --params_file affthla3db.pkl \
-    --outfile_prefix <name> \
-    --output_dir <dir> \
-    --model_name model_2_ptm \
-    --verbose
+    --targets testing_datasetv23.tsv \
+    --params_file ./model/14298113_params_1564.pkl \
+    --outfile_prefix test \
+    --output_dir ./output
 ```
 
-`--targets` accepts either a single TSV or a root directory, in which case all
-`*/inputs/target.tsv` files are concatenated and relative `templates_alignfile`
-paths are resolved against that root.
+---
 
-The MSA is the query sequence alone; structural information comes entirely from
-the templates. Crop size defaults to the longest target unless `--crop_size` is
-given, and a target longer than the crop is an error. Each target gets a seed
-derived from `--seed` and its target ID, so results depend on the target, not on
-row order in the TSV.
+## Validation / Model Evaluation
 
-Model-config overrides: `--msa_clusters` (5), `--extra_msa` (1),
-`--num_evo_blocks` (48), `--num_recycle`, `--struc_viol_weight`,
-`--resample_msa`.
+To reproduce the validation-style evaluation workflow, run:
 
-Outputs into `--output_dir`:
+```bash
+python run_predictionv3.py \
+    --targets testing_dataset.tsv \
+    --params_file ./model/14298113_params_1564.pkl \
+    --outfile_prefix testrun_diagnostic \
+    --output_dir ./output \
+    --model_name model_2_ptm \
+    --anchor_class_file ./anchor_class.csv \
+    --exact_validation
+```
 
-- `<prefix>_<target>_model_*.pdb` — raw AlphaFold output
-- `<target>_model_split.pdb` — same model re-chained into MHC (A) and peptide (B) with per-chain residue numbering; this is what `store.py` collects
-- `<prefix>_final.tsv` — one row per target with the input columns plus `<model>_plddt`, per-chain pLDDT, `<model>_pae` and per-chain-pair PAE, `<model>_dscore`, `<model>_dscore_similar`, and paths to both PDBs
+> **Note:** `--exact_validation` is intended for validation/evaluation when the corresponding native structures and native alignments are available. For prediction of new structures without native experimental structures, use the **Structure Prediction** workflow above instead.
+
+---
+
+## Benchmark Results
+
+### Benchmark setup
+
+To minimize data leakage, pHLA-I structures deposited **after 2022** were held out from fine-tuning and used as an independent test set.
+
+AFFT-HLA3DBv2 was benchmarked against the following baseline methods on the **same test set**:
+
+- AlphaFold3
+- Boltz-2
+- ESMFold2
+- AlphaFold2
+
+### Evaluation metric
+
+Prediction accuracy was evaluated using the peptide-backbone **D-score**, following the definition introduced in the HLA3DB study.
+
+A prediction was considered **structurally accurate** when:
+
+```text
+D-score < 1.5
+```
+
+relative to the experimentally determined structure.
+
+### Overall performance
+
+On this benchmark, **AFFT-HLA3DBv2 achieved the highest overall success rate** among the evaluated methods.
+
+Here, **success rate** refers to the percentage of test targets whose predicted peptide backbone has a D-score below 1.5 relative to the experimentally determined structure.
+
+### Subgroup analysis
+
+Benchmark results were additionally stratified by HLA type and peptide-backbone conformation:
+
+| Subgroup | Definition |
+| --- | --- |
+| **A02** | Targets belonging to the A02 supertype |
+| **Δ7-1** | Targets assigned to the Δ7-1 discrete peptide-backbone conformation |
+
+In the HLA3DB structural classification, **Δ7** denotes an anchor class, while **Δ7-1** denotes a recurrent discrete peptide-backbone conformation within that class.
+
+---
+
+## Citation
+
+If you use AFFT-HLA3DBv2 in your research, please cite:
+
+> Gupta S, Nerli S, Kutti Kandy S, Mersky GL, Sgourakis NG. **HLA3DB: comprehensive annotation of peptide/HLA complexes enables blind structure prediction of T cell epitopes.** *Nature Communications*. 2023;14:6349. doi:10.1038/s41467-023-42163-z.
