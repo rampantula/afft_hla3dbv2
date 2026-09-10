@@ -411,10 +411,10 @@ def main() -> None:
                         help="Exclude templates with MHC identity greater than this value. Default: 1.0.")
     parser.add_argument("--disable-mhc-identity-filter", action="store_true",
                         help="Do not filter by MHC identity before ranking.")
-    parser.add_argument("--mhc-weight", type=positive_float, default=0.7,
-                        help="Weight for normalized MHC alignment score. Default: 0.7.")
-    parser.add_argument("--peptide-weight", type=positive_float, default=0.3,
-                        help="Weight for normalized peptide BLOSUM score. Default: 0.3.")
+    parser.add_argument("--mhc-weight", type=positive_float, default=0.3,
+                        help="Weight for normalized MHC alignment score. Default: 0.3.")
+    parser.add_argument("--peptide-weight", type=positive_float, default=0.7,
+                        help="Weight for normalized peptide BLOSUM score. Default: 0.7.")
     parser.add_argument("--allow-fewer-than-top-n", action="store_true",
                         help="Write fewer than --top-n templates if filters remove too many candidates.")
     parser.add_argument("--write-debug-scores", action="store_true",
