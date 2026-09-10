@@ -1,4 +1,4 @@
-Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University.
+Copyright (c) 2026 The Children's Hospital of Philadelphia.
 All rights reserved.
 
 Academic and Non-Commercial Use License
