@@ -21,7 +21,7 @@ Methods used to finetune and Benchmark Results are included below.
 ## Setup and Runtime Options
 1. Clone this repository 
 ```bash
-git clone https://github.com/rampantula/afft-hla3dbv2
+git clone https://github.com/rampantula/afft_hla3dbv2
 cd afft-hla3dbv2
 ```
 2. Download the parameters from https://zenodo.org/records/22664552 and move the file into the "afft-hla3dbv2" directory
@@ -62,7 +62,7 @@ For each target, every template is scored on two axes:
 - **Peptide**: summed BLOSUM62 score over the nine positions, plus a Hamming mismatch count.
 
 Both scores are min-max normalized across the surviving candidates for that target, then combined as `mhc_weight * norm_mhc + peptide_weight * norm_peptide`
-(weights are renormalized to sum to 1; defaults 0.7 / 0.3). The top N are kept.
+(weights are renormalized to sum to 1; defaults 0.3 / 0.7). The top N are kept.
 By default only one template per base PDB ID is allowed, so `6PTE-AC` blocks `6PTE-DF`. A template whose ID equals the target ID is always excluded, and a
 trailing `_reordered` on a template filename is stripped before that comparison.
 
@@ -114,7 +114,7 @@ Useful flags:
 | Flag | Default | Effect |
 | --- | --- | --- |
 | `--top-n` | 4 | Templates written per target |
-| `--mhc-weight` / `--peptide-weight` | 0.7 / 0.3 | Score weighting |
+| `--mhc-weight` / `--peptide-weight` | 0.3 / 0.7 | Score weighting |
 | `--min-peptide-mismatches` | 0 | Drop templates *more* similar than this |
 | `--max-mhc-identity` | 1.0 | Drop templates above this MHC identity |
 | `--disable-peptide-mismatch-filter`, `--disable-mhc-identity-filter` | off | Skip the corresponding filter |
