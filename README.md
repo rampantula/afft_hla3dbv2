@@ -4,7 +4,7 @@ This repository contains scripts for the prediction of HLA class I / 9-mer pepti
 For methods related to HLA3DB (hla3db.research.chop.edu) refer to Gupta, S., Nerli, S., Kutti Kandy, S. et al. HLA3DB: comprehensive annotation of peptide/HLA complexes enables blind structure prediction of T cell epitopes. Nat Commun 14, 6349 (2023). https://doi.org/10.1038/s41467-023-42163-z
 
 ```
-Copyright (c) 2026 The Children's Hospital of Philadelphia and Stanford University
+Copyright (c) 2026 The Children's Hospital of Philadelphia
 Licensed for academic and non-commercial use only. Commercial use requires a
 separate license. See LICENSE for details.
 ```
