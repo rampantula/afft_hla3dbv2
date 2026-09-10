@@ -9,7 +9,7 @@ Licensed for academic and non-commercial use only. Commercial use requires a
 separate license. See LICENSE for details.
 ```
 
-Methods used to finetune and Benchmark Results are included below.
+Methods used to finetune and Benchmark Results are included below. For scripts used to finetune our installation please refer to the Finetuning branch of the repository. 
 
 ## Requirements
 - afft-hla3db conda env
